@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+    font-family: Arial, "Segoe UI Emoji", "Apple Color Emoji", 
+                 "Noto Color Emoji", sans-serif;
+    background: linear-gradient(135deg,#0f172a,#6382ca);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #4facfe;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2f80ed;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>🌤️ Weather App</h2>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getWeather()">🔍 Search</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+async function getWeather() {
+    const city = document.getElementById("city").value.trim();
+
+    if (!city) {
+        document.getElementById("result").innerHTML = "⚠️ Enter city name";
+        return;
+    }
+
+    const apiKey = "cf22e8c81a651462548008f5d2e6650a";
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.cod != 200) {
+            document.getElementById("result").innerHTML =
+                "❌ City not found";
+            return;
+        }
+
+        const temp = data.main.temp;
+        const humidity = data.main.humidity;
+        const condition = data.weather[0].main;
+
+        document.getElementById("result").innerHTML = `
+            <h3>📍 ${data.name}</h3>
+            <p>🌡️ Temp: ${temp} °C</p>
+            <p>💧 Humidity: ${humidity}%</p>
+            <p>☁️ Condition: ${condition}</p>
+        `;
+
+    } catch (error) {
+        document.getElementById("result").innerHTML =
+            "⚠️ Error fetching data";
+    }
+}
+</script>
+
+</body>
+</html>
